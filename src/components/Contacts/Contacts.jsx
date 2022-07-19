@@ -1,4 +1,5 @@
 import { FcFullTrash } from 'react-icons/fc';
+import { useSelector } from 'react-redux';
 import {
   DeleteBtn,
   ItemContacts,
@@ -6,22 +7,16 @@ import {
   TextContacts,
 } from './Contacts.styled';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact, getContacts, getFilter } from 'redux/contactsSlice';
+import { useGetContactsQuery } from 'redux/contactsSlice';
+import { getVisibleContacts } from 'redux/filter/filterSlise';
+import { useDeleteContactMutation } from 'redux/contactsSlice';
 
 export function Contacts() {
-  const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
-
-  const getFilteredContacts = () => {
-    const normalized = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalized)
-    );
-  };
-
-  const visibleContacts = getFilteredContacts();
+  const [deleteContact, { isLoading }] = useDeleteContactMutation();
+  const { data: contacts } = useGetContactsQuery();
+  const visibleContacts = useSelector(state =>
+    getVisibleContacts(state, contacts)
+  );
 
   return (
     <ListContacts>
@@ -30,7 +25,11 @@ export function Contacts() {
           <TextContacts>
             {name} : {number}
           </TextContacts>
-          <DeleteBtn onClick={() => dispatch(deleteContact(id))}>
+          <DeleteBtn
+            type="button"
+            disabled={isLoading}
+            onClick={() => deleteContact(id)}
+          >
             <FcFullTrash />
           </DeleteBtn>
         </ItemContacts>

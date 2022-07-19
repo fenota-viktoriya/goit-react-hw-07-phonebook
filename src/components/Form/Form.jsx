@@ -1,16 +1,19 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { addContact, getContacts } from 'redux/contactsSlice';
+import {
+  useAddContactMutation,
+  useGetContactsQuery,
+} from 'redux/contactsSlice';
 import { ButtonContact, FormContact, InputContact, Label } from './Form.styled';
 
 export function Form() {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
 
-  const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const { data: contacts } = useGetContactsQuery();
+
+  const [addContact] = useAddContactMutation();
 
   const handelInput = e => {
     const name = e.currentTarget.name;
@@ -20,8 +23,8 @@ export function Form() {
       case 'name':
         setName(value);
         break;
-      case 'number':
-        setNumber(value);
+      case 'phone':
+        setPhone(value);
         break;
       default:
         throw new Error();
@@ -30,13 +33,13 @@ export function Form() {
 
   const onSubmitForm = e => {
     e.preventDefault();
-
     const isContact = contacts.find(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
 
     if (!isContact) {
-      dispatch(addContact({ name, number }));
+      addContact({ name, phone });
+
       reset();
       return;
     }
@@ -47,7 +50,7 @@ export function Form() {
 
   const reset = () => {
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   return (
@@ -68,11 +71,11 @@ export function Form() {
         Num
         <InputContact
           type="tel"
-          name="number"
+          name="phone"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
-          value={number}
+          value={phone}
           onChange={handelInput}
         />
       </Label>

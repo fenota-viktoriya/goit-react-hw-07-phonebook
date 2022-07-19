@@ -1,6 +1,6 @@
 import { FcFilledFilter } from 'react-icons/fc';
 import { useDispatch } from 'react-redux';
-import { setFilter } from 'redux/contactsSlice';
+import { setFilter } from 'redux/filter/filterSlise';
 import { InputFilter, TitleFilter, Wrapper } from './Filter.styled';
 
 export function Filter() {
