@@ -20,10 +20,10 @@ export function Contacts() {
 
   return (
     <ListContacts>
-      {visibleContacts.map(({ id, name, number }) => (
+      {visibleContacts.map(({ id, name, phone }) => (
         <ItemContacts key={id}>
           <TextContacts>
-            {name} : {number}
+            {name} : {phone}
           </TextContacts>
           <DeleteBtn
             type="button"
